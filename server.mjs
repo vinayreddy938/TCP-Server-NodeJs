@@ -1,6 +1,8 @@
 import net from "net";
-
+// now we write server push events to all the clients 
+let clientsList=[];
 const server = net.createServer((socket)=>{
+    clientsList.push(socket);
     console.log("Client connected");
     socket.on("data", (data)=>{
         console.log("Received data from client:", data.toString());
@@ -10,6 +12,11 @@ const server = net.createServer((socket)=>{
         console.log("Client disconnected");
     });
 });
+process.stdin.on("data",(data)=>{
+    clientsList.forEach((socket)=>{
+        socket.write(data.toString())
+    })
+})
 server.listen(4000, "0.0.0.0",()=>{  
     console.log("Server listening on port 4000");
  });
